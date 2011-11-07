@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<registry>
+
+  <record interface="plone.app.contentlistingtile.interfaces.IContentListingTileSettings" field="listing_views">
+    <value>
+        <element key="listing_view">Listing view</element>
+        <element key="summary_view">Summary view</element>
+        <element key="tabular_view">Tabular view</element>
+        <element key="album_view">Album view</element>
+    </value>
+  </record>
+
+</registry>

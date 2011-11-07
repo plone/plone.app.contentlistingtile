@@ -30,6 +30,8 @@ setup(name='plone.app.contentlistingtile',
 
       install_requires=[
         'setuptools',
+        'plone.app.querystring',
+        'plone.directives.tiles',
         # -*- Extra requirements: -*-
         ],
 

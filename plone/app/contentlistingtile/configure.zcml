@@ -1,0 +1,68 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:grok="http://namespaces.zope.org/grok"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="plone">
+
+  <!-- Include our dependencies -->
+  <includeDependencies package="." />
+
+  <!-- Grok the package to initialise schema interfaces and content classes -->
+  <grok:grok package="." />
+
+  <!-- Register an extension profile to make the product installable -->
+  <genericsetup:registerProfile
+      name="default"
+      title="Content listing tile"
+      description=""
+      directory="profiles/default"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <utility
+      component="plone.app.contentlistingtile.tile.availableListingViewsVocabulary"
+      name="Available Listing Views"
+      />
+
+  <plone:tile
+      name="plone.app.standardtiles.contentlisting"
+      title="Content listing"
+      description="A tile which displays the content listing of this item"
+      add_permission="zope.Public"
+      class=".contentlisting.ContentListingTile"
+      for="Products.CMFCore.interfaces.IFolderish"
+      permission="zope2.View"
+      schema=".contentlisting.IContentListingTile"
+      />
+
+  <browser:page
+      name="tabular_view"
+      for="*"
+      permission="zope2.View"
+      template="templates/tabular_view.pt"
+      />
+
+  <browser:page
+      name="listing_view"
+      for="*"
+      permission="zope2.View"
+      template="templates/listing_view.pt"
+      />
+
+  <browser:page
+      name="summary_view"
+      for="*"
+      permission="zope2.View"
+      template="templates/summary_view.pt"
+      />
+
+  <browser:page
+      name="album_view"
+      for="*"
+      permission="zope2.View"
+      template="templates/album_view.pt"
+      />
+
+</configure>
