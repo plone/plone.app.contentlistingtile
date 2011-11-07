@@ -35,6 +35,7 @@ setup(name='plone.app.contentlistingtile',
 
       install_requires=[
         'setuptools',
+        'plone.formwidget.querystring',
         'plone.app.querystring',
         'plone.directives.tiles',
         # -*- Extra requirements: -*-
