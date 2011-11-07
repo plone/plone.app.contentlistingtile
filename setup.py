@@ -3,6 +3,11 @@ import os
 
 version = '1.0'
 
+tests_require = [
+    'plone.app.testing',
+    'plone.mocktestcase',
+    ]
+
 setup(name='plone.app.contentlistingtile',
       version=version,
       description="",
@@ -34,6 +39,11 @@ setup(name='plone.app.contentlistingtile',
         'plone.directives.tiles',
         # -*- Extra requirements: -*-
         ],
+
+      extras_require={
+        'test': tests_require,
+        },
+      tests_require=tests_require,
 
       entry_points="""
       # -*- Entry points: -*-
