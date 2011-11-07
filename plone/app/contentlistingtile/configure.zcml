@@ -24,14 +24,14 @@
       />
 
   <plone:tile
-      name="plone.app.standardtiles.contentlisting"
+      name="plone.app.contentlistingtile"
       title="Content listing"
       description="A tile which displays the content listing of this item"
       add_permission="zope.Public"
-      class=".contentlisting.ContentListingTile"
+      class=".tile.ContentListingTile"
       for="Products.CMFCore.interfaces.IFolderish"
       permission="zope2.View"
-      schema=".contentlisting.IContentListingTile"
+      schema=".tile.IContentListingTile"
       />
 
   <browser:page
