@@ -61,5 +61,7 @@
       permission="zope2.View"
       template="templates/album_view.pt"
       />
+  
+  <grok:grok package="." />
 
 </configure>
