@@ -12,7 +12,7 @@
 
   <records prefix="plone.app.deco.app_tiles.plone_app_contentlistingtile"
            interface="plone.app.deco.interfaces.ITile">
-    <value key="name">plone.app.standardtiles.contentlisting</value>
+    <value key="name">plone.app.contentlistingtile</value>
     <value key="label">Content listing</value>
     <value key="category">advanced</value>
     <value key="tile_type">app</value>
