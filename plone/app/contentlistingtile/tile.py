@@ -47,7 +47,7 @@ class ContentListingTile(PersistentTile):
 
         parsedquery = queryparser.parseFormquery(self.context, self.query)
         accessor = getMultiAdapter((self.context, self.request),
-                                   name='searchResults')(query=parsedquery)
+                                   name='querybuilderresults')(query=parsedquery)
 
         view = self.view_template
         view = view.encode('utf-8')
