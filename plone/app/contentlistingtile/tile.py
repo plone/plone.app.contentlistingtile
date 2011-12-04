@@ -1,6 +1,5 @@
 from plone.app.contentlistingtile import PloneMessageFactory as _
 from plone.app.contentlistingtile.interfaces import IContentListingTileSettings
-from plone.app.querystring import queryparser
 from plone.directives import form as directivesform
 from plone.formwidget.querystring.widget import QueryStringFieldWidget
 from plone.registry.interfaces import IRegistry
@@ -45,9 +44,8 @@ class ContentListingTile(PersistentTile):
     def contents(self):
         """Search results"""
 
-        parsedquery = queryparser.parseFormquery(self.context, self.query)
         accessor = getMultiAdapter((self.context, self.request),
-                                   name='querybuilderresults')(query=parsedquery)
+                                   name='querybuilderresults')(query=self.query)
 
         view = self.view_template
         view = view.encode('utf-8')
