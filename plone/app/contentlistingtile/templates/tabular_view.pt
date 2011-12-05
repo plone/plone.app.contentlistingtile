@@ -6,7 +6,9 @@
       lang="en"
       i18n:domain="plone">
     <body>
-        <div tal:define="results context">
+        <div tal:define="results context;
+                         original_context nocall:options/original_context|context;
+                         pas_member original_context/@@pas_member;">
             <div tal:condition="not: results">
                 <p><strong>Nothing to list</strong></p>
             </div>
@@ -59,7 +61,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <tal:name tal:condition="item_creator" tal:define="author item_creator">
+                                    <tal:name tal:condition="item_creator" tal:define="author python:pas_member.info(item_creator)">
 
                                         <a href="#"
                                            tal:attributes="href string:author/${author/username}"
