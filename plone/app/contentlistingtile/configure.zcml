@@ -55,13 +55,6 @@
       template="templates/summary_view.pt"
       />
 
-  <browser:page
-      name="album_view"
-      for="*"
-      permission="zope2.View"
-      template="templates/album_view.pt"
-      />
-  
   <grok:grok package="." />
 
 </configure>
