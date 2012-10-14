@@ -23,15 +23,18 @@
       name="Available Listing Views"
       />
 
+  <browser:resource name="plone.app.contentlistingtile.png" file="tile.png" />
+
   <plone:tile
       name="plone.app.contentlistingtile"
       title="Content listing"
       description="A tile which displays the content listing of this item"
-      add_permission="zope.Public"
-      class=".tile.ContentListingTile"
-      for="Products.CMFCore.interfaces.IFolderish"
+      icon="++resource++plone.app.contentlistingtile.png"
       permission="zope2.View"
+      add_permission="plone.app.tiles.AddTile"
+      class=".tile.ContentListingTile"
       schema=".tile.IContentListingTile"
+      for="Products.CMFCore.interfaces.IFolderish"
       />
 
   <browser:page

@@ -9,31 +9,10 @@
     </value>
   </record>
 
-  <records prefix="plone.app.deco.app_tiles.plone_app_contentlistingtile"
-           interface="plone.app.deco.interfaces.ITile">
-    <value key="name">plone.app.contentlistingtile</value>
-    <value key="label">Content listing</value>
-    <value key="category">advanced</value>
-    <value key="tile_type">app</value>
-    <value key="default_value"></value>
-    <value key="read_only">false</value>
-    <value key="settings">true</value>
-    <value key="favorite">false</value>
-    <value key="rich_text">false</value>
-    <value key="weight">10</value>
-  </records>
-
-  <record name="plone.app.deco.app_tiles.plone_app_contentlistingtile.available_actions">
-    <field type="plone.registry.field.List">
-      <title>Available actions for the Content listing tile</title>
-      <value_type type="plone.registry.field.TextLine" />
-    </field>
-    <value>
-      <element>blur</element>
-      <element>tile-align-block</element>
-      <element>tile-align-right</element>
-      <element>tile-align-left</element>
-    </value>
-  </record>
+    <record name="plone.app.tiles">
+        <value purge="false">
+            <element>plone.app.contentlistingtile</element>
+        </value>
+    </record>
 
 </registry>
