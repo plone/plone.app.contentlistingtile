@@ -3,7 +3,7 @@ from plone.app.contentlistingtile.interfaces import IContentListingTileSettings
 from plone.directives import form as directivesform
 from plone.formwidget.querystring.widget import QueryStringFieldWidget
 from plone.registry.interfaces import IRegistry
-from plone.tiles import PersistentTile
+from plone.tiles import Tile
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import getUtility
@@ -30,7 +30,7 @@ class IContentListingTile(directivesform.Schema):
                                   required=True)
 
 
-class ContentListingTile(PersistentTile):
+class ContentListingTile(Tile):
     """A tile that displays a listing of content items"""
 
     def __call__(self):
@@ -44,8 +44,9 @@ class ContentListingTile(PersistentTile):
     def contents(self):
         """Search results"""
 
-        accessor = getMultiAdapter((self.context, self.request),
-                                   name='querybuilderresults')(query=self.query)
+        accessor = getMultiAdapter(
+            (self.context, self.request),
+            name='querybuilderresults')(query=self.query)
 
         view = self.view_template
         view = view.encode('utf-8')
