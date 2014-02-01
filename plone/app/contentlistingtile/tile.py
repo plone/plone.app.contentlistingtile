@@ -23,7 +23,10 @@ class IContentListingTile(directivesform.Schema):
                                       u'you want to list by choosing what to '
                                       u'match on. The list of results will '
                                       u'be dynamically updated'),
-                        required=False)
+                        required=False,
+                        default=[{'i':'path',
+                                  'o':'plone.app.querystring.operation.string.relativePath',
+                                  'v':'.'}])
 
     view_template = schema.Choice(title=_(u"Display mode"),
                                   source=_(u"Available Listing Views"),
