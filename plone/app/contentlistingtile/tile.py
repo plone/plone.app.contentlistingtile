@@ -1,19 +1,28 @@
+import urllib
+from plone.tiles.absoluteurl import BaseTileAbsoluteURL
+from plone.tiles.data import TransientTileDataManager, decode
 from plone.app.contentlistingtile import PloneMessageFactory as _
 from plone.app.contentlistingtile.interfaces import IContentListingTileSettings
 from plone.directives import form as directivesform
 from plone.formwidget.querystring.widget import QueryStringFieldWidget
 from plone.registry.interfaces import IRegistry
 from plone.tiles import PersistentTile
+from plone.tiles import Tile
 from zope import schema
-from zope.component import getMultiAdapter
+from zope.component import getMultiAdapter, adapts
 from zope.component import getUtility
-from zope.interface import directlyProvides
+from zope.interface import directlyProvides, implements
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
+from plone.tiles.interfaces import ITileDataManager, ITile
 
 
 class IContentListingTile(directivesform.Schema):
     """A tile that displays a listing of content items"""
+
+    view_template = schema.Choice(title=_(u"Display mode"),
+                                  source=_(u"Available Listing Views"),
+                                  required=True)
 
     directivesform.widget(query=QueryStringFieldWidget)
     query = schema.List(title=_(u'Search terms'),
@@ -28,12 +37,9 @@ class IContentListingTile(directivesform.Schema):
                                   'o':'plone.app.querystring.operation.string.relativePath',
                                   'v':'.'}])
 
-    view_template = schema.Choice(title=_(u"Display mode"),
-                                  source=_(u"Available Listing Views"),
-                                  required=True)
 
 
-class ContentListingTile(PersistentTile):
+class ContentListingTile(Tile):
     """A tile that displays a listing of content items"""
 
     def __call__(self):
@@ -54,6 +60,73 @@ class ContentListingTile(PersistentTile):
         view = view.encode('utf-8')
         options = dict(original_context=self.context)
         return getMultiAdapter((accessor, self.request), name=view)(**options)
+
+class ListingTileAbsoluteURL(BaseTileAbsoluteURL):
+    """Override to simplify urls
+    """
+
+    def __str__(self):
+        url = super(ListingTileAbsoluteURL, self).__str__()
+        #we don't need the id
+        url = '/'.join(url.split('/')[:-1])
+
+        data = ITileDataManager(self.context).get()
+        if data:
+            url += '?' + query_encode(data)
+        return url
+
+
+class ListingTileDataManager(TransientTileDataManager):
+    """Override to decode simpler urls
+    """
+    implements(ITileDataManager)
+    adapts(ContentListingTile)
+
+    def get(self):
+        # If we don't have a schema, just take the request
+        if self.tileType is None or self.tileType.schema is None:
+            return self.data.copy()
+
+        self.data = query_decode(self.data)
+        # Try to decode the form data properly if we can
+        try:
+            return decode(self.data, self.tileType.schema, missing=True)
+        except (ValueError, UnicodeDecodeError,):
+            #LOGGER.exception(u"Could not convert form data to schema")
+            return self.data.copy()
+
+
+# turn query into simple data structure
+
+def query_encode(data):
+    query = data['query']
+    new_data = dict(view_template=data['view_template'])
+    for criteria in query:
+        i = criteria['i']
+        o = criteria['o']
+        v = criteria['v']
+        #TODO: should use default
+        if o != 'plone.app.querystring.operation.selection.is':
+            value = "%s|%s" % (o,v)
+        else:
+            value = v
+        new_data[i] = value
+    return urllib.urlencode(new_data)
+
+def query_decode(data):
+    query = []
+    for i,v in data.items():
+        if i == data['view_template']:
+            continue
+        if '|' in v:
+            o, v = v.split('|')
+        else:
+            o = 'plone.app.querystring.operation.selection.is'
+        criteria = dict(i=i,o=o,v=v)
+        query.append(criteria)
+    data['query'] = query
+    return data
+
 
 
 def availableListingViewsVocabulary(context):

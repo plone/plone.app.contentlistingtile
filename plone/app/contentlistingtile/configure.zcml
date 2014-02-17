@@ -37,6 +37,17 @@
       for="*"
       />
 
+    <view
+        for=".tile.ContentListingTile"
+        factory=".tile.ListingTileAbsoluteURL"
+        type="zope.publisher.interfaces.http.IHTTPRequest"
+        permission="zope.Public"
+        provides="zope.traversing.browser.interfaces.IAbsoluteURL"
+        />
+
+    <adapter factory=".tile.ListingTileDataManager" />
+
+
   <browser:page
       name="tabular_view"
       for="*"
