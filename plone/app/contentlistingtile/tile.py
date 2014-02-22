@@ -1,4 +1,5 @@
 import urllib
+from plone.app.querystring.interfaces import IQuerystringRegistryReader
 from plone.tiles.absoluteurl import BaseTileAbsoluteURL
 from plone.tiles.data import TransientTileDataManager, decode
 from plone.app.contentlistingtile import PloneMessageFactory as _
@@ -61,6 +62,38 @@ class ContentListingTile(Tile):
         options = dict(original_context=self.context)
         return getMultiAdapter((accessor, self.request), name=view)(**options)
 
+    def shortOperators(self):
+        """ return a new string for operator which is shorter.
+        Finds unique right substring
+        """
+        registry = getUtility(IRegistry)
+        registryreader = IQuerystringRegistryReader(registry)
+        config = registryreader()
+        op_converters = {}
+        splitname = lambda n: list(reversed(n.split('.')))
+        joinname = lambda p: '.'.join(reversed(p))
+        for indexName, index in config['indexes'].items():
+            operators = index['operators'].keys()
+            parts = []
+            for op in operators:
+                parts.append(splitname(op))
+            short2long = {}
+            long2short = {}
+            touse = 1
+            while len(short2long) < len(operators):
+                # The first is default. We can shorten to ''
+                short2long = {'': joinname(parts[0])}
+                long2short = {joinname(parts[0]): ''}
+                for part in parts[1:]:
+                    short = joinname(part[:touse])
+                    if short in short2long:
+                        break
+                    short2long[short] = joinname(part)
+                    long2short[short2long[short]] = short
+            op_converters[indexName] = (short2long, long2short)
+        return op_converters
+
+
 class ListingTileAbsoluteURL(BaseTileAbsoluteURL):
     """Override to simplify urls
     """
@@ -72,7 +105,7 @@ class ListingTileAbsoluteURL(BaseTileAbsoluteURL):
 
         data = ITileDataManager(self.context).get()
         if data:
-            url += '?' + query_encode(data)
+            url += '?' + query_encode(data, self.context.shortOperators())
         return url
 
 
@@ -87,7 +120,7 @@ class ListingTileDataManager(TransientTileDataManager):
         if self.tileType is None or self.tileType.schema is None:
             return self.data.copy()
 
-        self.data = query_decode(self.data)
+        self.data = query_decode(self.data, self.tile.shortOperators())
         # Try to decode the form data properly if we can
         try:
             return decode(self.data, self.tileType.schema, missing=True)
@@ -98,7 +131,7 @@ class ListingTileDataManager(TransientTileDataManager):
 
 # turn query into simple data structure
 
-def query_encode(data):
+def query_encode(data, short_operators):
     query = data['query']
     new_data = dict(view_template=data['view_template'])
     for criteria in query:
@@ -106,22 +139,24 @@ def query_encode(data):
         o = criteria['o']
         v = criteria['v']
         #TODO: should use default
-        if o != 'plone.app.querystring.operation.selection.is':
-            value = "%s|%s" % (o,v)
-        else:
-            value = v
-        new_data[i] = value
+        short_op = short_operators[i][1][o]
+        if short_op:
+            i = "%s:%s" % (i,short_op)
+        new_data[i] = v
     return urllib.urlencode(new_data)
 
-def query_decode(data):
-    query = []
+def query_decode(data, short_operators):
+    # we are also used on forms that include query
+    query = data.get('query',[])
     for i,v in data.items():
-        if i == data['view_template']:
+        if i in ['view_template', 'query']:
             continue
-        if '|' in v:
-            o, v = v.split('|')
+        short2long = short_operators[i][0]
+        if ':' in i:
+            i, o = i.split(':')
+            o = short2long.get(o,o)
         else:
-            o = 'plone.app.querystring.operation.selection.is'
+            o = short2long.get('')
         criteria = dict(i=i,o=o,v=v)
         query.append(criteria)
     data['query'] = query
