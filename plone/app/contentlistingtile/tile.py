@@ -151,6 +151,8 @@ def query_decode(data, short_operators):
     for i,v in data.items():
         if i in ['view_template', 'query']:
             continue
+        if i not in short_operators:
+            continue
         short2long = short_operators[i][0]
         if ':' in i:
             i, o = i.split(':')
