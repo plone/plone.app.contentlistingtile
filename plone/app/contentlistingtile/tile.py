@@ -141,6 +141,9 @@ def query_encode(data, short_operators):
         short_op = short_operators[i][1][o]
         if short_op:
             i = "%s:%s" % (i,short_op)
+        # HACK can we assume ',' as a delimter for all operators?
+        if isinstance(v, list):
+            v = ', '.join(v)
         new_data[i] = v
     return urllib.urlencode(new_data)
 
@@ -158,6 +161,8 @@ def query_decode(data, short_operators):
             o = short2long.get(o,o)
         else:
             o = short2long.get('')
+        if ',' in v:
+            v = [s.strip() for s in v.split(',')]
         criteria = dict(i=i,o=o,v=v)
         query.append(criteria)
     data['query'] = query
