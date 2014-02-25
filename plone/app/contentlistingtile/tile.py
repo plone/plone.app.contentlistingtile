@@ -36,7 +36,7 @@ class IContentListingTile(directivesform.Schema):
                         required=False,
                         default=[{'i':'path',
                                   'o':'plone.app.querystring.operation.string.relativePath',
-                                  'v':'.'}])
+                                  'v':'.::1'}])
 
 
 
@@ -138,7 +138,6 @@ def query_encode(data, short_operators):
         i = criteria['i']
         o = criteria['o']
         v = criteria['v']
-        #TODO: should use default
         short_op = short_operators[i][1][o]
         if short_op:
             i = "%s:%s" % (i,short_op)
