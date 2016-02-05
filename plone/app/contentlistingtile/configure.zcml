@@ -31,11 +31,22 @@
       description="A tile which displays the content listing of this item"
       icon="++resource++plone.app.contentlistingtile.png"
       permission="zope2.View"
-      add_permission="plone.app.tiles.AddTile"
+      add_permission="plone.ModifyDecoLayout"
       class=".tile.ContentListingTile"
       schema=".tile.IContentListingTile"
-      for="Products.CMFCore.interfaces.IFolderish"
+      for="*"
       />
+
+    <view
+        for=".tile.ContentListingTile"
+        factory=".tile.ListingTileAbsoluteURL"
+        type="zope.publisher.interfaces.http.IHTTPRequest"
+        permission="zope.Public"
+        provides="zope.traversing.browser.interfaces.IAbsoluteURL"
+        />
+
+    <adapter factory=".tile.ListingTileDataManager" />
+
 
   <browser:page
       name="tabular_view"
